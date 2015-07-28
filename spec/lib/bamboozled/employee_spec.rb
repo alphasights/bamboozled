@@ -117,6 +117,22 @@ describe "Employees" do
     end
   end
 
+  describe "#update" do
+    it 'updates an employee in BambooHR' do
+      xml = YAML.load_file('spec/fixtures/update_employee_xml.yml')
+      response = File.new('spec/fixtures/update_employee_response.json')
+      details = JSON.parse(File.read('spec/fixtures/update_employee_details.json'))
+
+      stub_request(:post, "https://x:x@api.bamboohr.com/api/gateway.php/x/v1/employees/1234").
+        with(xml).to_return(response)
+
+      employee = @client.employee.update(bamboo_id: '1234', employee_details: details)
+
+      employee["headers"].
+        must_equal({"content-type"=>["application/json; charset=utf-8"], "date"=>["Tue, 17 Jun 2014 19:25:35 UTC"]})
+    end
+  end
+
   # TODO - Figure out how to test this with webmock
   # it 'returns binary data for an employee photo' do
   # end
