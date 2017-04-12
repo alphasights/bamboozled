@@ -22,6 +22,7 @@ module Bamboozled
             query:  options[:query],
             body:   options[:body],
             format: :plain,
+            ssl_version: :TLSv1_2,
             basic_auth: auth,
             headers: {
               "Accept"       => "application/json",
