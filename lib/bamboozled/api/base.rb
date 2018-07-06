@@ -18,15 +18,11 @@ module Bamboozled
             method:  method
           }
 
-          strio = StringIO.new
-          log = Logger.new strio
-
           httparty_options = {
             query:  options[:query],
             body:   options[:body],
             format: :plain,
             ssl_version: :TLSv1_2,
-            debug_output: log,
             basic_auth: auth,
             headers: {
               "Accept"       => "application/json",
@@ -40,33 +36,6 @@ module Bamboozled
           case response.code
           when 200..201
             begin
-              if ENV.fetch('BAMBOO_REQUEST_LOGGING_ENBALED', false) == "true"
-                encoded_auth_to_remove = Base64.encode64("#{auth[:username]}:#{auth[:password]}").chomp
-
-                employee_number_match = /(employeeNumber\D*)(\d*)/.match(httparty_options[:body])
-                employee_number = employee_number_match[2].presence if employee_number_match.present?
-
-                work_email_match = /([a-zA-Z\.]*@alphasights.com)/.match(httparty_options[:body])
-                work_email = work_email_match[1].presence if work_email_match.present?
-
-                bamboo_id_match = /(employees\/)(\d*)/.match(path)
-                bamboo_id = bamboo_id_match[2].presence if bamboo_id_match.present?
-
-                request_log = method.to_s == "get" ? nil : strio.string.gsub(encoded_auth_to_remove, "REDACTED-AUTH")
-
-                BambooRequestLog.create(
-                  response_headers: response.headers.to_json,
-                  response_timestamp: response["date"],
-                  request_method: method.to_s,
-                  request_path: "#{path_prefix}#{path}",
-                  request_body: httparty_options[:body],
-                  raw_httparty_request_log: request_log,
-                  involving_employee_number:  employee_number,
-                  involving_work_email: work_email,
-                  involving_bamboo_id: bamboo_id
-                )
-              end
-
               if response.body.to_s.empty?
                 {"headers" => response.headers, "code" => "200", "message" => "ok"}.with_indifferent_access
               else
