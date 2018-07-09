@@ -4,9 +4,12 @@
 
 Bamboozled wraps the [BambooHR API](http://www.bamboohr.com/api/documentation/) without the use of Rails dependencies. Currently, this gem is **READ-ONLY**.
 
-# Usage:
+# Preliminary notes:
+We use a fork of this gem https://github.com/Skookum/bamboozled. The fork was originally in former employee's repo kylefdoherty/bamboozled and then we forked his fork after he left. To add to this complication, we have been using a specific branch of this fork called `tabular_data_update_row`. As of July 2018 no one knows why this branched was made and not merged into master but we have decided to merge this branch into our master fork to eliminate some of the confusion around Pistachio not using the master branch of the fork of the fork. Note however that the master in our fork may have diverged quite a bit from the original master. Additionally it is possible that the original gem now includes some of the functionality that we added in our fork; however, we have not had time to investigate or implement this as of yet.
 
-Install the gem with `gem install bamboozled` or add this to your `Gemfile`: `gem 'bamboozled'`
+# Usage:
+Add this to your `Gemfile`: `gem 'bamboozled', git: "https://github.com/alphasights/bamboozled.git"`
+You can also specify a branch and reference which is useful for devlopment. ie `gem 'bamboozled', git: "https://github.com/alphasights/bamboozled.git", branch: "tabular_data_update_row", ref: 'e3129f8'`
 
 ```ruby
 # Create the client:
@@ -82,6 +85,9 @@ client.meta.tables
 # Note: this is all uses in the system, whereas client.employee.all only gets active employees
 client.meta.users
 ```
+
+## Logging / Debugging
+If you ever need to log the requests being made to bamboo you can look to the now removed https://github.com/alphasights/bamboozled/pull/1/ for reference. Bamboo support, which is nearly worthless, will often request you send them the raw http requests being made.
 
 ## Todo:
 
