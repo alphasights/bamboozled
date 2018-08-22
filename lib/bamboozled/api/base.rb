@@ -18,11 +18,15 @@ module Bamboozled
             method:  method
           }
 
+          strio = StringIO.new
+          log = Logger.new strio
+
           httparty_options = {
             query:  options[:query],
             body:   options[:body],
             format: :plain,
             ssl_version: :TLSv1_2,
+            debug_output: log,
             basic_auth: auth,
             headers: {
               "Accept"       => "application/json",
@@ -33,6 +37,8 @@ module Bamboozled
           response = HTTParty.send(method, "#{path_prefix}#{path}", httparty_options)
           params[:response] = response.inspect.to_s
 
+          log = strio.string
+          binding.pry
           case response.code
           when 200..201
             begin
